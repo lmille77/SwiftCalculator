@@ -7,6 +7,7 @@
 import RxCocoa
 import RxSwift
 import RxGesture
+import TinyConstraints
 import UIKit
 
 class ViewController: UIViewController {
@@ -307,38 +308,37 @@ class ViewController: UIViewController {
         let labelContainer = UIView()
         view.addSubview(labelContainer)
         labelContainer.translatesAutoresizingMaskIntoConstraints = false
-        labelContainer.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        labelContainer.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.40).isActive = true
-        labelContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        labelContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        
+        labelContainer.edgesToSuperview(excluding: .bottom)
+        labelContainer.heightToSuperview(multiplier: 0.40)
+        
         labelContainer.addSubview(topLabel)
         labelContainer.addSubview(resultLabel)
         
-        topLabel.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        topLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        topLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        topLabel.heightAnchor.constraint(equalTo: labelContainer.heightAnchor, multiplier: 0.4).isActive = true
+        topLabel.edgesToSuperview(excluding: .bottom)
+        topLabel.heightToSuperview(multiplier: 0.40)
         
         let numPadding = UIView()
         view.addSubview(numPadding)
         numPadding.translatesAutoresizingMaskIntoConstraints = false
-        numPadding.topAnchor.constraint(equalTo: topLabel.bottomAnchor).isActive = true
-        numPadding.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        numPadding.widthAnchor.constraint(equalTo: labelContainer.widthAnchor, multiplier: 0.02).isActive = true
         
-        resultLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        resultLabel.trailingAnchor.constraint(equalTo: numPadding.leadingAnchor).isActive = true
-        resultLabel.bottomAnchor.constraint(equalTo: labelContainer.bottomAnchor).isActive = true
+        numPadding.topToBottom(of: topLabel)
+        numPadding.rightToSuperview()
+        numPadding.width(to: labelContainer, multiplier: 0.02)
+        
+        resultLabel.rightToLeft(of: numPadding)
+        resultLabel.leftToSuperview()
+        resultLabel.bottomToSuperview()
+        
         
         let numberPadContainer = UIView()
         view.addSubview(numberPadContainer)
         numberPadContainer.translatesAutoresizingMaskIntoConstraints = false
-        numberPadContainer.topAnchor.constraint(equalTo: labelContainer.bottomAnchor).isActive = true
-        numberPadContainer.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.60).isActive = true
-        numberPadContainer.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        numberPadContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        numberPadContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        numberPadContainer.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        
+        numberPadContainer.topToBottom(of: labelContainer)
+        numberPadContainer.edgesToSuperview(excluding: .top)
+        numberPadContainer.height(to: view, multiplier: 0.60)
+        
         numberPadContainer.addSubview(zeroButton)
         numberPadContainer.addSubview(oneButton)
         numberPadContainer.addSubview(twoButton)
@@ -358,196 +358,196 @@ class ViewController: UIViewController {
         numberPadContainer.addSubview(acButton)
         numberPadContainer.addSubview(posnegButton)
         numberPadContainer.addSubview(percButton)
-      
-        zeroButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        zeroButton.bottomAnchor.constraint(equalTo: numberPadContainer.bottomAnchor).isActive = true
-        zeroButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.50).isActive = true
+        
+        zeroButton.height(to: numberPadContainer, multiplier: 0.2)
+        zeroButton.width(to: numberPadContainer, multiplier: 0.5)
+        zeroButton.bottomToSuperview()
         
         zeroButton.rx.tap.subscribe(onNext: {[weak self, weak zeroButton] in
             guard let self = self, let zeroButton = zeroButton else{return}
             self.viewModel.buttonPressed(zeroButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        deciButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        deciButton.bottomAnchor.constraint(equalTo: numberPadContainer.bottomAnchor).isActive = true
-        deciButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        deciButton.leadingAnchor.constraint(equalTo: zeroButton.trailingAnchor).isActive = true
+        deciButton.height(to: numberPadContainer, multiplier: 0.2)
+        deciButton.width(to: numberPadContainer, multiplier: 0.25)
+        deciButton.bottomToSuperview()
+        deciButton.leftToRight(of: zeroButton)
         
         deciButton.rx.tap.subscribe(onNext: {[weak self, weak deciButton] in
             guard let self = self, let deciButton = deciButton else{return}
             self.viewModel.buttonPressed(deciButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        equalButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        equalButton.bottomAnchor.constraint(equalTo: numberPadContainer.bottomAnchor).isActive = true
-        equalButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        equalButton.leadingAnchor.constraint(equalTo: deciButton.trailingAnchor).isActive = true
-
+        equalButton.height(to: numberPadContainer, multiplier: 0.2)
+        equalButton.width(to: numberPadContainer, multiplier: 0.25)
+        equalButton.bottomToSuperview()
+        equalButton.leftToRight(of: deciButton)
+        
         equalButton.rx.tap.subscribe(onNext: {[weak self, weak equalButton] in
             guard let self = self, let equalButton = equalButton else{return}
             self.viewModel.buttonPressed(equalButton.tag - 1)
             self.changeBtnBorder(equalButton.tag)
         }).disposed(by: disposeBag)
         
-        oneButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        oneButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        oneButton.bottomAnchor.constraint(equalTo: zeroButton.topAnchor).isActive = true
-        oneButton.leadingAnchor.constraint(equalTo: numberPadContainer.leadingAnchor).isActive = true
-
+        oneButton.height(to: numberPadContainer, multiplier: 0.2)
+        oneButton.width(to: numberPadContainer, multiplier: 0.25)
+        oneButton.bottomToTop(of: zeroButton)
+        oneButton.leftToSuperview()
+        
         oneButton.rx.tap.subscribe(onNext: {[weak self, weak oneButton] in
             guard let self = self, let oneButton = oneButton else{return}
             self.viewModel.buttonPressed(oneButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        twoButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        twoButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        twoButton.bottomAnchor.constraint(equalTo: zeroButton.topAnchor).isActive = true
-        twoButton.leadingAnchor.constraint(equalTo: oneButton.trailingAnchor).isActive = true
-
+        twoButton.height(to: numberPadContainer, multiplier: 0.2)
+        twoButton.width(to: numberPadContainer, multiplier: 0.25)
+        twoButton.bottomToTop(of: zeroButton)
+        twoButton.leftToRight(of: oneButton)
+        
         twoButton.rx.tap.subscribe(onNext: {[weak self, weak twoButton] in
             guard let self = self, let twoButton = twoButton else{return}
             self.viewModel.buttonPressed(twoButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        threeButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        threeButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        threeButton.bottomAnchor.constraint(equalTo: deciButton.topAnchor).isActive = true
-        threeButton.leadingAnchor.constraint(equalTo: twoButton.trailingAnchor).isActive = true
-
+        threeButton.height(to: numberPadContainer, multiplier: 0.2)
+        threeButton.width(to: numberPadContainer, multiplier: 0.25)
+        threeButton.bottomToTop(of: deciButton)
+        threeButton.leftToRight(of: twoButton)
+        
         threeButton.rx.tap.subscribe(onNext: {[weak self, weak threeButton] in
             guard let self = self, let threeButton = threeButton else{return}
             self.viewModel.buttonPressed(threeButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        plusButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        plusButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        plusButton.bottomAnchor.constraint(equalTo: equalButton.topAnchor).isActive = true
-        plusButton.leadingAnchor.constraint(equalTo: threeButton.trailingAnchor).isActive = true
-
+        plusButton.height(to: numberPadContainer, multiplier: 0.2)
+        plusButton.width(to: numberPadContainer, multiplier: 0.25)
+        plusButton.bottomToTop(of: equalButton)
+        plusButton.leftToRight(of: threeButton)
+        
         plusButton.rx.tap.subscribe(onNext: {[weak self, weak plusButton] in
             guard let self = self, let plusButton = plusButton else{return}
             self.viewModel.buttonPressed(plusButton.tag - 1)
             self.changeBtnBorder(plusButton.tag)
         }).disposed(by: disposeBag)
         
-        fourButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        fourButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        fourButton.bottomAnchor.constraint(equalTo: oneButton.topAnchor).isActive = true
-        fourButton.leadingAnchor.constraint(equalTo: numberPadContainer.leadingAnchor).isActive = true
-
+        fourButton.height(to: numberPadContainer, multiplier: 0.2)
+        fourButton.width(to: numberPadContainer, multiplier: 0.25)
+        fourButton.bottomToTop(of: oneButton)
+        fourButton.leftToSuperview()
+        
         fourButton.rx.tap.subscribe(onNext: {[weak self, weak fourButton] in
             guard let self = self, let fourButton = fourButton else{return}
             self.viewModel.buttonPressed(fourButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        fiveButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        fiveButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        fiveButton.bottomAnchor.constraint(equalTo: twoButton.topAnchor).isActive = true
-        fiveButton.leadingAnchor.constraint(equalTo: fourButton.trailingAnchor).isActive = true
-
+        fiveButton.height(to: numberPadContainer, multiplier: 0.2)
+        fiveButton.width(to: numberPadContainer, multiplier: 0.25)
+        fiveButton.bottomToTop(of: twoButton)
+        fiveButton.leftToRight(of: fourButton)
+        
         fiveButton.rx.tap.subscribe(onNext: {[weak self, weak fiveButton] in
             guard let self = self, let fiveButton = fiveButton else{return}
             self.viewModel.buttonPressed(fiveButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        sixButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        sixButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        sixButton.bottomAnchor.constraint(equalTo: threeButton.topAnchor).isActive = true
-        sixButton.leadingAnchor.constraint(equalTo: fiveButton.trailingAnchor).isActive = true
-
+        sixButton.height(to: numberPadContainer, multiplier: 0.2)
+        sixButton.width(to: numberPadContainer, multiplier: 0.25)
+        sixButton.bottomToTop(of: threeButton)
+        sixButton.leftToRight(of: fiveButton)
+        
         sixButton.rx.tap.subscribe(onNext: {[weak self, weak sixButton] in
             guard let self = self, let sixButton = sixButton else{return}
             self.viewModel.buttonPressed(sixButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        minusButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        minusButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        minusButton.bottomAnchor.constraint(equalTo: plusButton.topAnchor).isActive = true
-        minusButton.leadingAnchor.constraint(equalTo: sixButton.trailingAnchor).isActive = true
-
+        minusButton.height(to: numberPadContainer, multiplier: 0.2)
+        minusButton.width(to: numberPadContainer, multiplier: 0.25)
+        minusButton.bottomToTop(of: plusButton)
+        minusButton.leftToRight(of: sixButton)
+        
         minusButton.rx.tap.subscribe(onNext: {[weak self, weak minusButton] in
             guard let self = self, let minusButton = minusButton else{return}
             self.viewModel.buttonPressed(minusButton.tag - 1)
             self.changeBtnBorder(minusButton.tag)
         }).disposed(by: disposeBag)
         
-        sevenButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        sevenButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        sevenButton.bottomAnchor.constraint(equalTo: fourButton.topAnchor).isActive = true
-        sevenButton.leadingAnchor.constraint(equalTo: numberPadContainer.leadingAnchor).isActive = true
-
+        sevenButton.height(to: numberPadContainer, multiplier: 0.2)
+        sevenButton.width(to: numberPadContainer, multiplier: 0.25)
+        sevenButton.bottomToTop(of: fourButton)
+        sevenButton.leftToSuperview()
+        
         sevenButton.rx.tap.subscribe(onNext: {[weak self, weak sevenButton] in
             guard let self = self, let sevenButton = sevenButton else{return}
             self.viewModel.buttonPressed(sevenButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        eightButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        eightButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        eightButton.bottomAnchor.constraint(equalTo: fiveButton.topAnchor).isActive = true
-        eightButton.leadingAnchor.constraint(equalTo: sevenButton.trailingAnchor).isActive = true
-
+        eightButton.height(to: numberPadContainer, multiplier: 0.2)
+        eightButton.width(to: numberPadContainer, multiplier: 0.25)
+        eightButton.bottomToTop(of: fiveButton)
+        eightButton.leftToRight(of: sevenButton)
+        
         eightButton.rx.tap.subscribe(onNext: {[weak self, weak eightButton] in
             guard let self = self, let eightButton = eightButton else{return}
             self.viewModel.buttonPressed(eightButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        nineButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        nineButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        nineButton.bottomAnchor.constraint(equalTo: sixButton.topAnchor).isActive = true
-        nineButton.leadingAnchor.constraint(equalTo: eightButton.trailingAnchor).isActive = true
-
+        nineButton.height(to: numberPadContainer, multiplier: 0.2)
+        nineButton.width(to: numberPadContainer, multiplier: 0.25)
+        nineButton.bottomToTop(of: sixButton)
+        nineButton.leftToRight(of: eightButton)
+        
         nineButton.rx.tap.subscribe(onNext: {[weak self, weak nineButton] in
             guard let self = self, let nineButton = nineButton else{return}
             self.viewModel.buttonPressed(nineButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        multButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        multButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        multButton.bottomAnchor.constraint(equalTo: minusButton.topAnchor).isActive = true
-        multButton.leadingAnchor.constraint(equalTo: nineButton.trailingAnchor).isActive = true
-
+        multButton.height(to: numberPadContainer, multiplier: 0.2)
+        multButton.width(to: numberPadContainer, multiplier: 0.25)
+        multButton.bottomToTop(of: minusButton)
+        multButton.leftToRight(of: nineButton)
+        
         multButton.rx.tap.subscribe(onNext: {[weak self, weak multButton] in
             guard let self = self, let multButton = multButton else{return}
             self.viewModel.buttonPressed(multButton.tag - 1)
             self.changeBtnBorder(multButton.tag)
         }).disposed(by: disposeBag)
         
-        acButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        acButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        acButton.bottomAnchor.constraint(equalTo: sevenButton.topAnchor).isActive = true
-        acButton.leadingAnchor.constraint(equalTo: numberPadContainer.leadingAnchor).isActive = true
-
+        acButton.height(to: numberPadContainer, multiplier: 0.2)
+        acButton.width(to: numberPadContainer, multiplier: 0.25)
+        acButton.bottomToTop(of: sevenButton)
+        acButton.leftToSuperview()
+        
         acButton.rx.tap.subscribe(onNext: {[weak self, weak acButton] in
             guard let self = self, let acButton = acButton else{return}
             self.viewModel.buttonPressed(acButton.tag - 1)
             self.changeBtnBorder(acButton.tag)
         }).disposed(by: disposeBag)
         
-        posnegButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        posnegButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        posnegButton.bottomAnchor.constraint(equalTo: eightButton.topAnchor).isActive = true
-        posnegButton.leadingAnchor.constraint(equalTo: acButton.trailingAnchor).isActive = true
-
+        posnegButton.height(to: numberPadContainer, multiplier: 0.2)
+        posnegButton.width(to: numberPadContainer, multiplier: 0.25)
+        posnegButton.bottomToTop(of: eightButton)
+        posnegButton.leftToRight(of: acButton)
+        
         posnegButton.rx.tap.subscribe(onNext: {[weak self, weak posnegButton] in
             guard let self = self, let posnegButton = posnegButton else{return}
             self.viewModel.buttonPressed(posnegButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        percButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        percButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        percButton.bottomAnchor.constraint(equalTo: nineButton.topAnchor).isActive = true
-        percButton.leadingAnchor.constraint(equalTo: posnegButton.trailingAnchor).isActive = true
-
+        percButton.height(to: numberPadContainer, multiplier: 0.2)
+        percButton.width(to: numberPadContainer, multiplier: 0.25)
+        percButton.bottomToTop(of: nineButton)
+        percButton.leftToRight(of: posnegButton)
+        
         percButton.rx.tap.subscribe(onNext: {[weak self, weak percButton] in
             guard let self = self, let percButton = percButton else{return}
             self.viewModel.buttonPressed(percButton.tag - 1)
         }).disposed(by: disposeBag)
         
-        divideButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
-        divideButton.widthAnchor.constraint(equalTo: numberPadContainer.widthAnchor, multiplier: 0.25).isActive = true
-        divideButton.bottomAnchor.constraint(equalTo: multButton.topAnchor).isActive = true
-        divideButton.leadingAnchor.constraint(equalTo: percButton.trailingAnchor).isActive = true
-
+        divideButton.height(to: numberPadContainer, multiplier: 0.2)
+        divideButton.width(to: numberPadContainer, multiplier: 0.25)
+        divideButton.bottomToTop(of: multButton)
+        divideButton.leftToRight(of: percButton)
+        
         divideButton.rx.tap.subscribe(onNext: {[weak self, weak divideButton] in
             guard let self = self, let divideButton = divideButton else{return}
             self.viewModel.buttonPressed(divideButton.tag - 1)
@@ -555,22 +555,22 @@ class ViewController: UIViewController {
         }).disposed(by: disposeBag)
     }
     private func changeBtnBorder (_ value:Int){
-             if((value == 12 || value == 17) && prevTag != 0){
-                 let button = self.view.viewWithTag(prevTag) as! UIButton
-                 button.layer.borderWidth = 1
-                 prevTag = 0
-             }
-             if(value >= 13 && value <= 16){
-                 if prevTag != 0{
-                     let button = self.view.viewWithTag(prevTag) as! UIButton
-                     button.layer.borderWidth = 1
-                     prevTag = 0
-                 }
-                 let button = self.view.viewWithTag(value) as! UIButton
-                 button.layer.borderWidth = 3
-                 prevTag = value
-             }
-         }
+        if((value == 12 || value == 17) && prevTag != 0){
+            let button = self.view.viewWithTag(prevTag) as! UIButton
+            button.layer.borderWidth = 1
+            prevTag = 0
+        }
+        if(value >= 13 && value <= 16){
+            if prevTag != 0{
+                let button = self.view.viewWithTag(prevTag) as! UIButton
+                button.layer.borderWidth = 1
+                prevTag = 0
+            }
+            let button = self.view.viewWithTag(value) as! UIButton
+            button.layer.borderWidth = 3
+            prevTag = value
+        }
+    }
     
 }
-    
+

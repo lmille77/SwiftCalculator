@@ -17,6 +17,7 @@
 		8F2FF44027C57C0500F842A3 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 8F2FF43F27C57C0500F842A3 /* RxCocoa */; };
 		8F2FF44227C57C0500F842A3 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 8F2FF44127C57C0500F842A3 /* RxRelay */; };
 		8F2FF44427C57C0500F842A3 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 8F2FF44327C57C0500F842A3 /* RxSwift */; };
+		8F2FF49027C9616600F842A3 /* TinyConstraints in Frameworks */ = {isa = PBXBuildFile; productRef = 8F2FF48F27C9616600F842A3 /* TinyConstraints */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 			files = (
 				8F2FF44227C57C0500F842A3 /* RxRelay in Frameworks */,
 				8F2FF44027C57C0500F842A3 /* RxCocoa in Frameworks */,
+				8F2FF49027C9616600F842A3 /* TinyConstraints in Frameworks */,
 				8F2FF44427C57C0500F842A3 /* RxSwift in Frameworks */,
 				8F2FF43B27C578D300F842A3 /* RxGesture in Frameworks */,
 			);
@@ -96,6 +98,7 @@
 				8F2FF43F27C57C0500F842A3 /* RxCocoa */,
 				8F2FF44127C57C0500F842A3 /* RxRelay */,
 				8F2FF44327C57C0500F842A3 /* RxSwift */,
+				8F2FF48F27C9616600F842A3 /* TinyConstraints */,
 			);
 			productName = DynamicCalculator;
 			productReference = 8F24B6C227C01DC20075FE03 /* DynamicCalculator.app */;
@@ -128,6 +131,7 @@
 			packageReferences = (
 				8F2FF43927C578D300F842A3 /* XCRemoteSwiftPackageReference "RxGesture" */,
 				8F2FF43E27C57C0500F842A3 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				8F2FF48E27C9616600F842A3 /* XCRemoteSwiftPackageReference "TinyConstraints" */,
 			);
 			productRefGroup = 8F24B6C327C01DC20075FE03 /* Products */;
 			projectDirPath = "";
@@ -398,6 +402,14 @@
 				kind = branch;
 			};
 		};
+		8F2FF48E27C9616600F842A3 /* XCRemoteSwiftPackageReference "TinyConstraints" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/roberthein/TinyConstraints.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -420,6 +432,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8F2FF43E27C57C0500F842A3 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
+		};
+		8F2FF48F27C9616600F842A3 /* TinyConstraints */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8F2FF48E27C9616600F842A3 /* XCRemoteSwiftPackageReference "TinyConstraints" */;
+			productName = TinyConstraints;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
