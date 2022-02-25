@@ -13,6 +13,7 @@ class ViewController: UIViewController {
     private var prevTag:Int = 0
     private var disposeBag = DisposeBag()
     private var viewModel: ViewModel!
+    
     private func setupViewBindings() {
         viewModel.output
             .observe(on: MainScheduler.instance)
@@ -298,13 +299,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
-        view.addSubview(oneButton)
         setupLayout()
     }
     
     private func setupLayout(){
-        
-        
         
         let labelContainer = UIView()
         view.addSubview(labelContainer)
@@ -388,6 +386,7 @@ class ViewController: UIViewController {
         equalButton.rx.tap.subscribe(onNext: {[weak self, weak equalButton] in
             guard let self = self, let equalButton = equalButton else{return}
             self.viewModel.buttonPressed(equalButton.tag - 1)
+            self.changeBtnBorder(equalButton.tag)
         }).disposed(by: disposeBag)
         
         oneButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
@@ -428,6 +427,7 @@ class ViewController: UIViewController {
         plusButton.rx.tap.subscribe(onNext: {[weak self, weak plusButton] in
             guard let self = self, let plusButton = plusButton else{return}
             self.viewModel.buttonPressed(plusButton.tag - 1)
+            self.changeBtnBorder(plusButton.tag)
         }).disposed(by: disposeBag)
         
         fourButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
@@ -468,6 +468,7 @@ class ViewController: UIViewController {
         minusButton.rx.tap.subscribe(onNext: {[weak self, weak minusButton] in
             guard let self = self, let minusButton = minusButton else{return}
             self.viewModel.buttonPressed(minusButton.tag - 1)
+            self.changeBtnBorder(minusButton.tag)
         }).disposed(by: disposeBag)
         
         sevenButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
@@ -508,6 +509,7 @@ class ViewController: UIViewController {
         multButton.rx.tap.subscribe(onNext: {[weak self, weak multButton] in
             guard let self = self, let multButton = multButton else{return}
             self.viewModel.buttonPressed(multButton.tag - 1)
+            self.changeBtnBorder(multButton.tag)
         }).disposed(by: disposeBag)
         
         acButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
@@ -518,6 +520,7 @@ class ViewController: UIViewController {
         acButton.rx.tap.subscribe(onNext: {[weak self, weak acButton] in
             guard let self = self, let acButton = acButton else{return}
             self.viewModel.buttonPressed(acButton.tag - 1)
+            self.changeBtnBorder(acButton.tag)
         }).disposed(by: disposeBag)
         
         posnegButton.heightAnchor.constraint(equalTo: numberPadContainer.heightAnchor, multiplier: 0.2).isActive = true
@@ -548,7 +551,26 @@ class ViewController: UIViewController {
         divideButton.rx.tap.subscribe(onNext: {[weak self, weak divideButton] in
             guard let self = self, let divideButton = divideButton else{return}
             self.viewModel.buttonPressed(divideButton.tag - 1)
+            self.changeBtnBorder(divideButton.tag)
         }).disposed(by: disposeBag)
     }
+    private func changeBtnBorder (_ value:Int){
+             if((value == 12 || value == 17) && prevTag != 0){
+                 let button = self.view.viewWithTag(prevTag) as! UIButton
+                 button.layer.borderWidth = 1
+                 prevTag = 0
+             }
+             if(value >= 13 && value <= 16){
+                 if prevTag != 0{
+                     let button = self.view.viewWithTag(prevTag) as! UIButton
+                     button.layer.borderWidth = 1
+                     prevTag = 0
+                 }
+                 let button = self.view.viewWithTag(value) as! UIButton
+                 button.layer.borderWidth = 3
+                 prevTag = value
+             }
+         }
+    
 }
     
