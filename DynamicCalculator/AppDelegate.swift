@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func rootWindow() {
         self.window = UIWindow(frame: UIScreen.main.bounds)
-        self.window?.rootViewController = ViewController.create(ViewModel())
+        self.window?.rootViewController = ViewController()
         self.window?.makeKeyAndVisible()
     }
 
