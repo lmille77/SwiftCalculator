@@ -15,13 +15,13 @@ class ViewController : UIViewController {
         case add, subtract, multiply, divide
     }
     
-    private var disposeBag = DisposeBag()
-    let calculator = CalculatorViewModel()
-    var operationActive : Bool = false
-    var currentOperation : Operations?
-    var firstTerm : Double = -1
+    fileprivate var disposeBag = DisposeBag()
+    fileprivate let calculator = CalculatorViewModel()
+    fileprivate var operationActive : Bool = false
+    fileprivate var currentOperation : Operations?
+    fileprivate var firstTerm : Double = -1
     
-    let resultLabel : UILabel = {
+    fileprivate let resultLabel : UILabel = {
         let label = UILabel()
         label.textColor = .black
         label.backgroundColor = .white
@@ -31,7 +31,7 @@ class ViewController : UIViewController {
         return label
     }()
     
-    let topLabel:UILabel = {
+    fileprivate let topLabel:UILabel = {
         let label = UILabel()
         label.backgroundColor = UIColor.black
         label.textAlignment = .center
@@ -120,7 +120,7 @@ class ViewController : UIViewController {
         }
     }
     
-    private func setupLayout() {
+    fileprivate func setupLayout() {
         let labelContainer = UIView ()
         view.addSubview(labelContainer)
         labelContainer.translatesAutoresizingMaskIntoConstraints = false

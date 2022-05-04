@@ -11,15 +11,11 @@ import RxCocoa
 import TinyConstraints
 
 class CalculatorViewModel : UIView {
-    enum Operations {
-        case add, subtract, multiply, divide
-    }    
-    
     public var output = BehaviorRelay<String>(value: "0")
-    private var disposeBag = DisposeBag()
-    private var buttons = [UIButton]()
-    private let operations : [String] = [".", "=", "+", "-", "x", "/", "AC", "+/-", "%"]
-    private var prevIndex : Int = 0
+    fileprivate var disposeBag = DisposeBag()
+    fileprivate var buttons = [UIButton]()
+    fileprivate let operations : [String] = [".", "=", "+", "-", "x", "/", "AC", "+/-", "%"]
+    fileprivate var prevIndex : Int = 0
     
     public override func layoutSubviews() {
         super.layoutSubviews()
@@ -29,87 +25,54 @@ class CalculatorViewModel : UIView {
     
     fileprivate func setupButtons() {
         for i in 0..<19 {
+            let button = UIButton()
+            button.layer.borderWidth = 1
+            button.titleLabel?.font =  UIFont.boldSystemFont(ofSize: 24)
+            button.translatesAutoresizingMaskIntoConstraints = false
             switch(i / 10) {
             case 1 :
+                button.setTitle(operations[i % 10], for: .normal)
+                button.setTitleColor(.black, for: .normal)
                 switch(i % 10) {
                 case 0:
-                    let button = UIButton()
-                    button.setTitle(operations[i % 10], for: .normal)
-                    button.layer.borderWidth = 1
-                    button.layer.borderColor = UIColor.black.cgColor
-                    button.titleLabel?.font =  UIFont.boldSystemFont(ofSize: 24)
-                    button.setTitleColor(.black, for: .normal)
                     button.backgroundColor = UIColor.lightGray
-                    button.tag = 1
-                    button.translatesAutoresizingMaskIntoConstraints = false
-                    buttons.append(button)
                 case 1...5 :
-                    let button = UIButton()
-                    button.setTitle(operations[i % 10], for: .normal)
-                    button.layer.borderWidth = 1
-                    button.layer.borderColor = UIColor.black.cgColor
-                    button.titleLabel?.font =  UIFont.boldSystemFont(ofSize: 24)
-                    button.setTitleColor(.black, for: .normal)
                     button.backgroundColor = UIColor.orange
-                    button.tag = 1
-                    button.translatesAutoresizingMaskIntoConstraints = false
-                    buttons.append(button)
                 default:
-                    let button = UIButton()
-                    button.setTitle(operations[i % 10], for: .normal)
-                    button.layer.borderWidth = 1
-                    button.layer.borderColor = UIColor.black.cgColor
-                    button.titleLabel?.font =  UIFont.boldSystemFont(ofSize: 24)
-                    button.setTitleColor(.black, for: .normal)
-                    button.setTitleColor(UIColor.white, for: .normal)
+                    button.setTitleColor(.white, for: .normal)
                     button.backgroundColor = UIColor.darkGray
-                    button.tag = 1
-                    button.translatesAutoresizingMaskIntoConstraints = false
-                    buttons.append(button)
                 }
+                buttons.append(button)
             default :
-                let button = UIButton()
                 button.setTitle(String(i), for: .normal)
-                button.layer.borderWidth = 1
-                button.layer.borderColor = UIColor.black.cgColor
-                button.titleLabel?.font =  UIFont.boldSystemFont(ofSize: 24)
                 button.setTitleColor(.black, for: .normal)
                 button.backgroundColor = UIColor.lightGray
-                button.tag = 1
-                button.translatesAutoresizingMaskIntoConstraints = false
                 buttons.append(button)
             }
         }
     }
+     
     fileprivate func setupConstraints() {
         for i in 0..<buttons.count {
             addSubview(buttons[i])
             switch(i / 10){
             case 1:
+                buttons[i].heightToSuperview(multiplier: 0.2)
+                buttons[i].widthToSuperview(multiplier: 0.25)
                 switch (i) {
                 case 10:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToSuperview()
                     buttons[i].leftToRight(of: buttons[i - 10])
                 case 11:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToSuperview()
                     buttons[i].leftToRight(of: buttons[i - 1])
                 case 12, 13, 14, 15:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToTop(of: buttons[i - 1])
                     buttons[i].leftToRight(of: buttons[10])
                 case 16:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToTop(of: buttons[7])
                     buttons[i].leftToSuperview()
                 default:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToTop(of: buttons[i - 9])
                     buttons[i].leftToRight(of: buttons[i - 1])
                 }
@@ -118,29 +81,25 @@ class CalculatorViewModel : UIView {
                     self.changeBtnBorder(index: i)
                 }).disposed(by: disposeBag)
             default:
+                if i != 0 {
+                    buttons[i].heightToSuperview(multiplier: 0.2)
+                    buttons[i].widthToSuperview(multiplier: 0.25)
+                }
                 switch(i) {
                 case 0:
                     buttons[i].heightToSuperview(multiplier: 0.2)
                     buttons[i].widthToSuperview(multiplier: 0.5)
                     buttons[i].bottomToSuperview()
                 case 1:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToTop(of: buttons[i - 1])
                     buttons[i].leftToSuperview()
                 case 2, 3:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToTop(of: buttons[0])
                     buttons[i].leftToRight(of: buttons[i - 1])
                 case 4,7:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToTop(of: buttons[i - 3])
                     buttons[i].leftToSuperview()
                 default:
-                    buttons[i].heightToSuperview(multiplier: 0.2)
-                    buttons[i].widthToSuperview(multiplier: 0.25)
                     buttons[i].bottomToTop(of: buttons[i - 3])
                     buttons[i].leftToRight(of: buttons[i - 1])
                 }
@@ -152,7 +111,7 @@ class CalculatorViewModel : UIView {
         
     }
     
-    private func changeBtnBorder (index : Int) {
+    fileprivate func changeBtnBorder (index : Int) {
         switch(index) {
         case 11, 16 :
             buttons[prevIndex].layer.borderWidth = 1
@@ -167,17 +126,10 @@ class CalculatorViewModel : UIView {
     }
     
     public func formatNumber(_ value:Double) -> Bool{
-        let intVal = floor(value)
-        if(value - intVal == 0){
-            return true
-        }
-        else{
-            return false
-        }
+        return value - floor(value) == 0
     }
     
     public func formatDecimal(_ value:Double) -> Double{
-        let result = Double(round(10000000000 * value)/10000000000)
-        return result
-    }    
+        return Double(round(10000000000 * value)/10000000000)
+    }
 }
