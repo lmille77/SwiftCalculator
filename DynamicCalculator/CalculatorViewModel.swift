@@ -11,18 +11,25 @@ import RxCocoa
 import TinyConstraints
 
 class CalculatorViewModel : UIView {
+    
     public var output = BehaviorRelay<String>(value: "0")
+    
+    fileprivate var isConstraints : Bool = false
     fileprivate var disposeBag = DisposeBag()
     fileprivate var buttons = [UIButton]()
-    fileprivate let operations : [String] = [".", "=", "+", "-", "x", "/", "AC", "+/-", "%"]
     fileprivate var prevIndex : Int = 0
+    
+    fileprivate let operations : [String] = [".", "=", "+", "-", "x", "/", "AC", "+/-", "%"]
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        setupButtons()
-        setupConstraints()
+        if !isConstraints {
+            setupButtons()
+            setupConstraints()
+        }
     }
     
+    // Creates the buttons needed for the calculator
     fileprivate func setupButtons() {
         for i in 0..<19 {
             let button = UIButton()
@@ -50,19 +57,20 @@ class CalculatorViewModel : UIView {
                 buttons.append(button)
             }
         }
+        isConstraints = true
     }
      
+    // Adds constraints to the buttons in relation to each other
     fileprivate func setupConstraints() {
         for i in 0..<buttons.count {
             addSubview(buttons[i])
-            switch(i / 10){
+            
+            switch(i / 11){
             case 1:
                 buttons[i].heightToSuperview(multiplier: 0.2)
                 buttons[i].widthToSuperview(multiplier: 0.25)
+                
                 switch (i) {
-                case 10:
-                    buttons[i].bottomToSuperview()
-                    buttons[i].leftToRight(of: buttons[i - 10])
                 case 11:
                     buttons[i].bottomToSuperview()
                     buttons[i].leftToRight(of: buttons[i - 1])
@@ -78,18 +86,22 @@ class CalculatorViewModel : UIView {
                 }
                 buttons[i].rx.tap.subscribe(onNext: { _ in
                     self.output.accept(self.buttons[i].titleLabel?.text ?? "")
-                    self.changeBtnBorder(index: i)
+                    self.changeButtonBorder(index: i)
                 }).disposed(by: disposeBag)
+                
             default:
                 if i != 0 {
                     buttons[i].heightToSuperview(multiplier: 0.2)
                     buttons[i].widthToSuperview(multiplier: 0.25)
                 }
+                
                 switch(i) {
                 case 0:
                     buttons[i].heightToSuperview(multiplier: 0.2)
                     buttons[i].widthToSuperview(multiplier: 0.5)
+                    
                     buttons[i].bottomToSuperview()
+                    buttons[i].leftToSuperview()
                 case 1:
                     buttons[i].bottomToTop(of: buttons[i - 1])
                     buttons[i].leftToSuperview()
@@ -99,6 +111,9 @@ class CalculatorViewModel : UIView {
                 case 4,7:
                     buttons[i].bottomToTop(of: buttons[i - 3])
                     buttons[i].leftToSuperview()
+                case 10:
+                    buttons[i].bottomToSuperview()
+                    buttons[i].leftToRight(of: buttons[i - 10])
                 default:
                     buttons[i].bottomToTop(of: buttons[i - 3])
                     buttons[i].leftToRight(of: buttons[i - 1])
@@ -108,10 +123,30 @@ class CalculatorViewModel : UIView {
                 }).disposed(by: disposeBag)
             }
         }
+        NotificationCenter.default.rx.notification(UIDevice.orientationDidChangeNotification)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] _ in
+                self?.handleOrientationChange()
+            }).disposed(by: disposeBag)
         
     }
     
-    fileprivate func changeBtnBorder (index : Int) {
+    // Tracks orientation changes
+    internal func handleOrientationChange() {
+        guard UIDevice.current.orientation != .faceUp || UIDevice.current.orientation != .faceDown else { return }
+        guard self.isDevicePortrait() else { return }
+        
+        disposeBag = DisposeBag()
+        self.removeAllConstraints()
+        self.setupConstraints()
+        self.layoutIfNeeded()
+    }
+    
+    fileprivate func isDevicePortrait() -> Bool {
+        return UIScreen.main.bounds.width < UIScreen.main.bounds.height
+    }
+    
+    fileprivate func changeButtonBorder (index : Int) {
         switch(index) {
         case 11, 16 :
             buttons[prevIndex].layer.borderWidth = 1
@@ -125,11 +160,10 @@ class CalculatorViewModel : UIView {
         }
     }
     
-    public func formatNumber(_ value:Double) -> Bool{
-        return value - floor(value) == 0
-    }
-    
-    public func formatDecimal(_ value:Double) -> Double{
-        return Double(round(10000000000 * value)/10000000000)
+    public func removeAllConstraints() {
+        for view in self.subviews {
+            view.removeFromSuperview()
+        }
     }
 }
+
