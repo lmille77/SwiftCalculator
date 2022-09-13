@@ -33,7 +33,7 @@ class ViewController : UIViewController {
         return label
     }()
     
-    fileprivate let topLabel:UILabel = {
+    fileprivate let topLabel : UILabel = {
         let label = UILabel()
         label.backgroundColor = UIColor.black
         label.textAlignment = .center
@@ -84,85 +84,90 @@ class ViewController : UIViewController {
         calculator.output
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _output in
+                
+                let resultText = self?.resultLabel.text ?? ""
+                let resultTextToDouble = Double(resultText) ?? 0
+                let previousTerm = self?.previousTerm ?? 0
+                
                 switch(_output) {
                 case _ where _output.isNumeric :
-                    if  (Double(String(self?.resultLabel.text ?? "")) ?? 0) == self?.previousTerm && !(self?.nextTermStarted ?? false) {
-                        self?.resultLabel.text = String(_output)
+                    if resultText == "0" || resultText.isEmpty {
+                        self?.resultLabel.text = _output
+                    } else if (resultTextToDouble == previousTerm
+                               && !(self?.nextTermStarted ?? false)
+                               && resultTextToDouble != 0.0) {
+                        self?.resultLabel.text = _output
                         self?.nextTermStarted = true
-                    } else if self?.resultLabel.text == "0" {
-                        self?.resultLabel.text = String(_output)
                     } else {
-                        self?.resultLabel.text = (self?.resultLabel.text ?? "") + String(_output)
+                        self?.resultLabel.text = resultText + _output
                     }
                 case ".":
                     if !(self?.resultLabel.text?.contains(".") ?? false) {
-                        self?.resultLabel.text = (self?.resultLabel.text ?? "") + "."
+                        self?.resultLabel.text = resultText + "."
                     } else if self?.resultLabel.text?.contains(".") ?? false && self?.operationActive ?? false {
                         self?.resultLabel.text = "0."
                     } else {
                         // Do nothing
                     }
                 case "+":
-                    self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                    self?.previousTerm = resultTextToDouble
                     self?.operationActive = true
                     self?.currentOperation = .add
                 case "-":
-                    self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                    self?.previousTerm = resultTextToDouble
                     self?.operationActive = true
                     self?.currentOperation = .subtract
                 case "x":
-                    self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                    self?.previousTerm = resultTextToDouble
                     self?.operationActive = true
                     self?.currentOperation = .multiply
                 case "/":
-                    self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                    self?.previousTerm = resultTextToDouble
                     self?.operationActive = true
                     self?.currentOperation = .divide
                 case "AC":
                     self?.resultLabel.text = "0"
+                    self?.operationActive = false
                     self?.nextTermStarted = false
                     self?.previousTerm = nil
                 case "+/-":
-                    self?.resultLabel.text = String(-1 * (Double(String(self?.resultLabel.text ?? "")) ?? 0))
-                    self?.removeTrailingZero()
+                    self?.resultLabel.text = String(-1 * resultTextToDouble)
+                    self?.resultLabel.text = Utility.removeTrailingZero(resultText)
                 case "%":
-                    self?.resultLabel.text = String((Double(String(self?.resultLabel.text ?? "")) ?? 0) / 100)
-                    self?.removeTrailingZero()
+                    self?.resultLabel.text = String(resultTextToDouble / 100)
+                    self?.resultLabel.text = Utility.removeTrailingZero(resultText)
                 default:
                     switch(self?.currentOperation) {
                     case .add:
-                        self?.resultLabel.text = String(Utility.formatDecimal((self?.previousTerm ?? 0) + (Double(String(self?.resultLabel.text ?? "")) ?? 0)))
-                        self?.removeTrailingZero()
-                        self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm + resultTextToDouble))
+                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+                        self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
+                        self?.operationActive = false
                     case .subtract:
-                        self?.resultLabel.text = String(Utility.formatDecimal((self?.previousTerm ?? 0) - (Double(String(self?.resultLabel.text ?? "")) ?? 0)))
-                        self?.removeTrailingZero()
-                        self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm - resultTextToDouble))
+                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+                        self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
+                        self?.operationActive = false
                     case .multiply:
-                        self?.resultLabel.text = String(Utility.formatDecimal((self?.previousTerm ?? 0) * (Double(String(self?.resultLabel.text ?? "")) ?? 0)))
-                        self?.removeTrailingZero()
-                        self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm * resultTextToDouble))
+                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+                        self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
+                        self?.operationActive = false
                     case .divide:
-                        self?.resultLabel.text = String(Utility.formatDecimal((self?.previousTerm ?? 0) / (Double(String(self?.resultLabel.text ?? "")) ?? 0)))
-                        self?.removeTrailingZero()
-                        self?.previousTerm = (Double(String(self?.resultLabel.text ?? "")) ?? 0)
+                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm / resultTextToDouble))
+                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+                        self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
+                        self?.operationActive = false
                     default:
                         break
                     }
                     break
                 }
             }).disposed(by: disposeBag)
-    }
-    
-    // Removes any trailing zeros from the value being stored in resultLabel if it is a whole number
-    fileprivate func removeTrailingZero() {
-        if Utility.formatNumber(Double(String(self.resultLabel.text ?? "")) ?? 0) {
-            self.resultLabel.text = String(Int(Double(String(self.resultLabel.text ?? "")) ?? 0))
-        }
     }
 }
 

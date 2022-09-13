@@ -13,12 +13,14 @@ import TinyConstraints
 class CalculatorViewModel : UIView {
     
     public var output = BehaviorRelay<String>(value: "0")
+    fileprivate var disposeBag = DisposeBag()
     
     fileprivate var isConstraints : Bool = false
-    fileprivate var disposeBag = DisposeBag()
-    fileprivate var buttons = [UIButton]()
-    fileprivate var prevIndex : Int = 0
     
+    fileprivate var prevIndex : Int = 0
+    fileprivate let CAPACITY : Int = 19
+    
+    fileprivate var buttons = [UIButton]()
     fileprivate let operations : [String] = [".", "=", "+", "-", "x", "/", "AC", "+/-", "%"]
     
     public override func layoutSubviews() {
@@ -31,26 +33,26 @@ class CalculatorViewModel : UIView {
     
     // Creates the buttons needed for the calculator
     fileprivate func setupButtons() {
-        for i in 0..<19 {
+        for i in 0..<CAPACITY {
             let button = UIButton()
             button.layer.borderWidth = 1
             button.titleLabel?.font =  UIFont.boldSystemFont(ofSize: 24)
             button.translatesAutoresizingMaskIntoConstraints = false
             switch(i / 10) {
-            case 1 :
+            case 1:
                 button.setTitle(operations[i % 10], for: .normal)
                 button.setTitleColor(.black, for: .normal)
                 switch(i % 10) {
                 case 0:
                     button.backgroundColor = UIColor.lightGray
-                case 1...5 :
+                case 1...5:
                     button.backgroundColor = UIColor.orange
                 default:
                     button.setTitleColor(.white, for: .normal)
                     button.backgroundColor = UIColor.darkGray
                 }
                 buttons.append(button)
-            default :
+            default:
                 button.setTitle(String(i), for: .normal)
                 button.setTitleColor(.black, for: .normal)
                 button.backgroundColor = UIColor.lightGray
@@ -65,7 +67,7 @@ class CalculatorViewModel : UIView {
         for i in 0..<buttons.count {
             addSubview(buttons[i])
             
-            switch(i / 11){
+            switch(i / 11) {
             case 1:
                 buttons[i].heightToSuperview(multiplier: 0.2)
                 buttons[i].widthToSuperview(multiplier: 0.25)
@@ -148,10 +150,10 @@ class CalculatorViewModel : UIView {
     
     fileprivate func changeButtonBorder (index : Int) {
         switch(index) {
-        case 11, 16 :
+        case 11, 16:
             buttons[prevIndex].layer.borderWidth = 1
             prevIndex = 0
-        default :
+        default:
             if prevIndex != 0 {
                 buttons[prevIndex].layer.borderWidth = 1
             }
