@@ -122,6 +122,7 @@ class CalculatorViewModel : UIView {
                 }
                 buttons[i].rx.tap.subscribe(onNext: { _ in
                     self.output.accept(self.buttons[i].titleLabel?.text ?? "")
+					self.highlightButtonBorder(index: i)
                 }).disposed(by: disposeBag)
             }
         }
@@ -148,6 +149,14 @@ class CalculatorViewModel : UIView {
         return UIScreen.main.bounds.width < UIScreen.main.bounds.height
     }
     
+	fileprivate func highlightButtonBorder (index : Int) {
+		buttons[index].layer.borderWidth = 2
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: { [weak self] in
+			self?.buttons[index].layer.borderWidth = 1
+		})
+	}
+	
     fileprivate func changeButtonBorder (index : Int) {
         switch(index) {
         case 11, 16:
