@@ -131,40 +131,41 @@ class ViewController : UIViewController {
                     self?.nextTermStarted = false
                     self?.previousTerm = nil
                 case "+/-":
-                    self?.resultLabel.text = String(-1 * resultTextToDouble)
-                    self?.resultLabel.text = Utility.removeTrailingZero(resultText)
+                    let tempValue = -1 * resultTextToDouble
+					self?.resultLabel.text = tempValue.clean
                 case "%":
-                    self?.resultLabel.text = String(resultTextToDouble / 100)
-                    self?.resultLabel.text = Utility.removeTrailingZero(resultText)
+                    let tempValue = resultTextToDouble / 100
+					self?.resultLabel.text = tempValue.clean
                 default:
                     switch(self?.currentOperation) {
                     case .add:
-                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm + resultTextToDouble))
-                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+						let tempValue = Utility.formatDecimal(previousTerm + resultTextToDouble)
+						self?.resultLabel.text = tempValue.clean
                         self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
                         self?.operationActive = false
                     case .subtract:
-                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm - resultTextToDouble))
-                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+						let tempValue = Utility.formatDecimal(previousTerm - resultTextToDouble)
+						self?.resultLabel.text = tempValue.clean
                         self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
                         self?.operationActive = false
                     case .multiply:
-                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm * resultTextToDouble))
-                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+						let tempValue = Utility.formatDecimal(previousTerm * resultTextToDouble)
+						self?.resultLabel.text = tempValue.clean
                         self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
                         self?.operationActive = false
                     case .divide:
-                        self?.resultLabel.text = String(Utility.formatDecimal(previousTerm / resultTextToDouble))
-                        self?.resultLabel.text = Utility.removeTrailingZero(self?.resultLabel.text ?? "")
+                        let tempValue = Utility.formatDecimal(previousTerm / resultTextToDouble)
+						self?.resultLabel.text = tempValue.clean
                         self?.previousTerm = resultTextToDouble
                         self?.nextTermStarted = false
                         self?.operationActive = false
                     default:
                         break
                     }
+					self?.resultLabel.text = Utility.formatResultLabel(self?.resultLabel.text ?? "")
                     break
                 }
             }).disposed(by: disposeBag)
