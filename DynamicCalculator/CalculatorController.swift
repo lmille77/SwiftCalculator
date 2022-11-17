@@ -13,7 +13,7 @@ import UIKit
 class CalculatorController : UIViewController {
 	
 	fileprivate var disposeBag = DisposeBag()
-	fileprivate let calculator = CalculatorViewModel()
+	fileprivate let calculator = CalculatorView()
 	fileprivate var operationActive : Bool = false
 	fileprivate var currentOperation : Operations?
 	fileprivate var previousTerm : Double?
@@ -130,29 +130,36 @@ class CalculatorController : UIViewController {
 					self?.previousTerm = resultTextToDouble
 					self?.operationActive = true
 					self?.currentOperation = .add
+					self?.calculator.resetExtendedButtonBorder()
 				case "-":
 					self?.previousTerm = resultTextToDouble
 					self?.operationActive = true
 					self?.currentOperation = .subtract
+					self?.calculator.resetExtendedButtonBorder()
 				case "x":
 					self?.previousTerm = resultTextToDouble
 					self?.operationActive = true
 					self?.currentOperation = .multiply
+					self?.calculator.resetExtendedButtonBorder()
 				case "/":
 					self?.previousTerm = resultTextToDouble
 					self?.operationActive = true
 					self?.currentOperation = .divide
+					self?.calculator.resetExtendedButtonBorder()
 				case "AC":
 					self?.resultLabel.text = "0"
 					self?.operationActive = false
 					self?.nextTermStarted = false
 					self?.previousTerm = nil
+					self?.calculator.resetExtendedButtonBorder()
 				case "+/-":
 					let tempValue = -1 * resultTextToDouble
 					self?.resultLabel.text = tempValue.clean
+					self?.calculator.resetExtendedButtonBorder()
 				case "%":
 					let tempValue = resultTextToDouble / 100
 					self?.resultLabel.text = tempValue.clean
+					self?.calculator.resetExtendedButtonBorder()
 				default:
 					switch(self?.currentOperation) {
 					case .add:
@@ -196,6 +203,7 @@ class CalculatorController : UIViewController {
 				let resultTextToDouble = Double(resultText) ?? 0
 				let previousTerm = self?.previousTerm ?? 0
 				
+				// TODO: Finish implementing the different functions that the extended calculator has
 				switch(input) {
 				default:
 					self?.calculator.resetRegularButtonBorder()

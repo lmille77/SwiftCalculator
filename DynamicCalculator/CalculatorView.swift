@@ -14,9 +14,9 @@ enum Operations {
 	case add, subtract, multiply, divide
 }
 
-class CalculatorViewModel : UIView {
+class CalculatorView : UIView {
 	internal let regularCalculatorViewModel = RegularCalculatorViewModel()
-	internal let extendedCalculatorViewModel = ExtendedCalculatorViewModel()
+	internal let extendedCalculatorViewModel = ExtendedCalculatorView()
 	
 	func resetRegularButtonBorder() {
 		regularCalculatorViewModel.resetButtonBorder();
@@ -174,7 +174,7 @@ class RegularCalculatorViewModel : UIView {
 	}
 }
 
-class ExtendedCalculatorViewModel : UIView {
+class ExtendedCalculatorView : UIView {
 	
 	internal var output = BehaviorRelay<String>(value: "0")
 	internal var disposeBag = DisposeBag()
@@ -238,6 +238,10 @@ class ExtendedCalculatorViewModel : UIView {
 					buttons[i].leftToRight(of: buttons[i - 5])
 				}
 			}
+			buttons[i].rx.tap.subscribe(onNext: { [weak self] _ in
+				self?.output.accept(self?.buttons[i].titleLabel?.text ?? "")
+				self?.highlightButtonBorder(index: i)
+			}).disposed(by: disposeBag)
 		}
 	}
 	
